@@ -1,9 +1,0 @@
-:~
-  title+'whitelist'
-  info+'Whitelist the Internet.'
-  color+0x4b.c647
-  version+[0 1 0]
-  website+'https://peacefulfoundation.org'
-  license+'GPLv2'
-  base+'whitelist'
-==
