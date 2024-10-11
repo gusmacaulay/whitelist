@@ -33,7 +33,17 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  `this::
+  ?+    mark  (on-poke:def mark vase)
+      %whitelist-action
+    =/  action  !<($%(action) vase)
+    ?-    -.action
+        %add
+      `this(state (~(put in state) domain.action))
+    ::
+        %remove
+      `this(state (~(del in state) domain.action))
+    ==  ==
+::  
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
 ++  on-peek
