@@ -64,22 +64,42 @@
       ?~  our-whitelist  `this
       =/  new-whitelist  (~(del in u.our-whitelist) domain.action)
       `this(whitemap.state (~(put by whitemap.state) our.bowl new-whitelist))
+    ::
+        %import
+      =*  pals  .^((set ship) %gx /(scot %p our.bowl)/pals/(scot %da now.bowl)/targets/noun)
+      =/  cards  %+  turn  ~(tap in pals)
+        |=  =ship
+        [%pass /import-whitelist %arvo %a %keen ship %whitelist /x/whitemap]
+      [cards this]
     ==
   ==
-::    
+
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
   ?+    path  (on-peek:def path)
+      [%x %whitemap ~]
+    ``noun+!>(whitemap.state)
       [%x %whitelist ~]
     ``json+!>((whitelist-to-json whitemap.state))
       [%x %pals ~]
     =/  pals  .^((set ship) %gx /(scot %p our.bowl)/pals/(scot %da now.bowl)/targets/noun)
     ``json+!>(`json`[%a (turn ~(tap in pals) |=(p=ship [%s (scot %p p)]))])
   ==
-++  on-agent  on-agent:def
+++  on-agent
+  |=  [=wire =sign:agent:gall]
+  ^-  (quip card _this)
+  ?+    wire  (on-agent:def wire sign)
+      [%import-whitelist ~]
+    ?+    -.sign  (on-agent:def wire sign)
+        %fact
+      =/  whitelist  !<((map ship (set @t)) q.cage.sign)
+      =/  new-whitemap  (~(uni by whitemap.state) whitelist)
+      `this(whitemap.state new-whitemap)
+    ==
+  ==
 ++  on-arvo   on-arvo:def
 ++  on-fail   on-fail:def
 --
