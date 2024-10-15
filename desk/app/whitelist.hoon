@@ -45,7 +45,6 @@
   ::?-  -.old
   ::  %0  `this(state old)
   ::==
-
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
@@ -69,30 +68,47 @@
       =*  pals  .^((set ship) %gx /(scot %p our.bowl)/pals/(scot %da now.bowl)/targets/noun)
       =/  cards  %+  turn  ~(tap in pals)
         |=  =ship
-        [%pass /import-whitelist %arvo %a %keen ship %whitelist /x/whitemap]
+        [%watch /whitelist %agent ship /x/whitelist]
       [cards this]
     ==
   ==
-
-++  on-watch  on-watch:def
-++  on-leave  on-leave:def
-++  on-peek
-  |=  =path
-  ^-  (unit (unit cage))
-  ?+    path  (on-peek:def path)
-      [%x %whitemap ~]
-    ``noun+!>(whitemap.state)
+::
+++  on-watch
+  |=  [=ship =path]
+  ^-  (quip card _this)
+  ?+    path  (on-watch:def ship path)
       [%x %whitelist ~]
-    ``json+!>((whitelist-to-json whitemap.state))
-      [%x %pals ~]
-    =/  pals  .^((set ship) %gx /(scot %p our.bowl)/pals/(scot %da now.bowl)/targets/noun)
-    ``json+!>(`json`[%a (turn ~(tap in pals) |=(p=ship [%s (scot %p p)]))])
+    ~&  (slag "Subscribed to whitelist of ship: " (scot %p ship))
+    `this
   ==
+::
+++  on-leave
+  |=  [=ship =path]
+  ^-  (quip card _this)
+  ?+    path  (on-leave:def ship path)
+      [%x %whitelist ~]
+    ~&  (slag "Unsubscribed from whitelist of ship: " (scot %p ship))
+    `this
+  ==
+::
+++  on-peek
+|=  =path
+^-  (unit (unit cage))
+?+    path  (on-peek:def path)
+    [%x %whitemap ~]
+  ``noun+!>(whitemap.state)
+    [%x %whitelist ~]
+  ``json+!>((whitelist-to-json whitemap.state))
+    [%x %pals ~]
+  =/  pals  .^((set ship) %gx /(scot %p our.bowl)/pals/(scot %da now.bowl)/targets/noun)
+  ``json+!>(`json`[%a (turn ~(tap in pals) |=(p=ship [%s (scot %p p)]))])
+==
+::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card _this)
   ?+    wire  (on-agent:def wire sign)
-      [%import-whitelist ~]
+      [%whitelist ~]
     ?+    -.sign  (on-agent:def wire sign)
         %fact
       =/  whitelist  !<((map ship (set @t)) q.cage.sign)
