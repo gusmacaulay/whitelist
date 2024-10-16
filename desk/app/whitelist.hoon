@@ -1,6 +1,6 @@
 ::  whitelist.hoon
 ::
-/-  *whitelist
+/-  *whitelist, pals
 /+  default-agent, dbug
   |%
   +$  versioned-state
@@ -41,9 +41,8 @@
 ++  on-load
   |=  old-state=vase
   ^-  (quip card _this)
-  :_  this(state !<(state-0 old-state))
+  :_  this
   [%pass /pals %agent [our.bowl %pals] %watch /targets]~
-
 ++  on-watch
   |=  =path
   ^-  (quip card _this)
@@ -88,11 +87,9 @@
       [%pals ~]
     ?+    -.sign  (on-agent:def wire sign)
         %fact
-      =/  pals  !<((set ship) q.cage.sign)
-      =/  cards  %+  turn  ~(tap in pals)
-        |=  =ship
-        [%pass /whitelist/(scot %p ship) %agent [ship %whitelist] %watch /x/whitelist]
-      [cards this]
+      =/  target  !<(effect:pals q.cage.sign)
+      =/  card  [%pass /whitelist/(scot %p ship.target) %agent [ship.target %whitelist] %watch /x/whitelist]
+      [[card ~] this]
     ==
       [%whitelist @ ~]
     ?+    -.sign  (on-agent:def wire sign)
