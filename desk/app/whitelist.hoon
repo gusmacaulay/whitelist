@@ -6,6 +6,11 @@
   +$  versioned-state
     $%  state-0
     ==
+  +$  action
+    $%  [%add domain=@t]
+        [%remove domain=@t]
+        [%restart-subs ~]
+    ==
   +$  state-0  [%0 whitemap=(map ship whitelist)]
   +$  whitelist  (set @t)
   +$  card  card:agent:gall
@@ -43,6 +48,7 @@
   ^-  (quip card _this)
   :_  this
   [%pass /pals %agent [our.bowl %pals] %watch /targets]~
+::
 ++  on-watch
   |=  =path
   ^-  (quip card _this)
@@ -53,7 +59,10 @@
     [%give %fact ~ %whitelist-update !>(our-whitelist)]~
   ==
 
-++  on-leave  on-leave:def
+++  on-leave  
+  |=  =path
+  ~&  'whitelist: leaving!'
+  (on-leave:def path)
 
 ++  on-poke
   |=  [=mark =vase]
@@ -77,6 +86,16 @@
       =/  new-state  this(whitemap.state (~(put by whitemap.state) our.bowl new-whitelist))
       :_  new-state
       [%give %fact ~[/x/whitelist] %whitelist-update !>(new-whitelist)]~
+    ::
+        %restart-subs
+      =/  kick-cards=(list card)
+        %+  turn  ~(tap by whitemap.state)
+        |=  [=ship whitelist=(set @t)]
+        [%pass /whitelist/(scot %p ship) %agent [ship %whitelist] %leave ~]
+      =/  pals-kick=card  [%pass /pals %agent [our.bowl %pals] %leave ~]
+      =/  pals-sub=card   [%pass /pals %agent [our.bowl %pals] %watch /targets]
+      =/  all-cards  (weld kick-cards [pals-kick pals-sub ~])
+      [all-cards this(whitemap.state ~)]
     ==
   ==
 ::
@@ -87,6 +106,7 @@
       [%pals ~]
     ?+    -.sign  (on-agent:def wire sign)
         %fact
+      ~&  'adding pal whitelist subscription'
       =/  target  !<(effect:pals q.cage.sign)
       =/  card  [%pass /whitelist/(scot %p ship.target) %agent [ship.target %whitelist] %watch /x/whitelist]
       [[card ~] this]
@@ -94,7 +114,9 @@
       [%whitelist @ ~]
     ?+    -.sign  (on-agent:def wire sign)
         %fact
+      ~&  'adding whitelist item from subscription'
       =/  ship  (slav %p i.t.wire)
+      ~&  ship
       =/  whitelist  !<((set @t) q.cage.sign)
       `this(whitemap.state (~(put by whitemap.state) ship whitelist))
     ==
